@@ -23,6 +23,8 @@ int basichashmap_init(struct basichashmap_s **hashmap) {
         return BASICHASHMAP_MEMORY_ERROR;
     }
 
+    *hashmap = new_hashmap;
+
     return BASICHASHMAP_SUCCESS;
 }
 
