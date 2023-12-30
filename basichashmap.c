@@ -1,6 +1,7 @@
 #include "basichashmap.h"
 #include <stdlib.h>
 #include <basicvector.h>
+#include <string.h>
 
 struct basichashmap_s {
     struct basicvector_s *vector;
@@ -8,12 +9,12 @@ struct basichashmap_s {
 
 struct basichashmap_entry_s {
     char *index;
-    void *data;
+    void *value;
 };
 
 int basichashmap_init(struct basichashmap_s **hashmap) {
     struct basichashmap_s *new_hashmap = malloc(sizeof(struct basichashmap_s));
-    
+
     if (new_hashmap == NULL) {
         return BASICHASHMAP_MEMORY_ERROR;
     }
@@ -28,6 +29,46 @@ int basichashmap_init(struct basichashmap_s **hashmap) {
     return BASICHASHMAP_SUCCESS;
 }
 
+int basichashmap_remove_by_index(
+    struct basichashmap_s *hashmap,
+    char *index,
+    void (*deallocation_function)(char *index, void *value, void *user_data),
+    void *user_data
+);
+
+int basichashmap_set(
+    struct basichashmap_s *hashmap, 
+    char *index, 
+    void *value, 
+    void (*deallocation_function)(char *index, void *value, void *user_data), 
+    void *user_data
+) {
+    if (hashmap == NULL) {
+        return BASICHASHMAP_MEMORY_ERROR;
+    }
+
+    if (index == NULL) {
+        return BASICHASHMAP_INVALID_ARGUMENT;
+    }
+
+    int remove_status = basichashmap_remove_by_index(hashmap, index, deallocation_function, user_data);
+
+    if (remove_status != BASICHASHMAP_SUCCESS && remove_status != BASICHASHMAP_ITEM_NOT_FOUND) {
+        return remove_status;
+    }
+
+    struct basichashmap_entry_s *entry = malloc(sizeof(struct basichashmap_entry_s));
+
+    char *own_index = malloc(sizeof(char) * (strlen(index) + 1));
+    strcpy(own_index, index);
+    entry->index = own_index;
+    entry->value = value;
+
+    basicvector_push(hashmap->vector, entry);
+
+    return BASICHASHMAP_SUCCESS;
+}
+
 // see usage of this struct in basichashmap_free for explanation
 struct deallocation_user_data_basicvector_free_s {
     void (*deallocation_function)(void *index, void *item, void *user_data);
@@ -38,7 +79,7 @@ void basichashmap_entry_s_deallocation_function(void *vector_item, void *user_da
     struct deallocation_user_data_basicvector_free_s *deallocation_user_data = (struct deallocation_user_data_basicvector_free_s *) user_data;
     struct basichashmap_entry_s *hashmap_entry = (struct basichashmap_entry_s *) vector_item;
 
-    deallocation_user_data->deallocation_function(hashmap_entry->index, hashmap_entry->data, user_data);
+    deallocation_user_data->deallocation_function(hashmap_entry->index, hashmap_entry->value, user_data);
 
     free(hashmap_entry->index);
 

@@ -3,6 +3,8 @@
 
 #define BASICHASHMAP_SUCCESS 0
 #define BASICHASHMAP_MEMORY_ERROR -1
+#define BASICHASHMAP_INVALID_ARGUMENT -2
+#define BASICHASHMAP_ITEM_NOT_FOUND -3
 
 struct basichashmap_s;
 
@@ -29,9 +31,9 @@ int basichashmap_init(struct basichashmap_s **hashmap);
  *  user_data               - Pointer with context data that is later passed to deallocation_function
  *
  * Returns:
- *  BASICHASHMAP_SUCCESS        - When everything went ok
- *  BASICHASHMAP_MEMORY_ERROR   - When memory error occured (for example could not allocate memory for new item)
- *  
+ *  BASICHASHMAP_SUCCESS            - When everything went ok
+ *  BASICHASHMAP_MEMORY_ERROR       - When passed hashmap is NULL or memory error occured (for example could not allocate memory for new item)
+ *  BASICHASHMAP_INVALID_ARGUMENT   - When passed index is NULL
  */
 int basichashmap_set(struct basichashmap_s *hashmap, char *index, void *value, void (*deallocation_function)(char *index, void *value, void *user_data), void *user_data);
 
