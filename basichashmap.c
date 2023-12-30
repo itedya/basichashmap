@@ -46,6 +46,32 @@ int basichashmap_init(struct basichashmap_s **hashmap) {
     return BASICHASHMAP_SUCCESS;
 }
 
+bool basicvector_get_search_function(void *item, void *user_data) {
+    struct basichashmap_entry_s *entry = (struct basichashmap_entry_s *) item;
+    char *index = (char *) user_data;
+
+    return strcmp(index, entry->index) == 0;
+}
+
+int basichashmap_get(struct basichashmap_s *hashmap, char *index, void **result) {
+    if (hashmap == NULL) return BASICHASHMAP_MEMORY_ERROR;
+    if (index == NULL || result == NULL) return BASICHASHMAP_INVALID_ARGUMENT;
+
+    struct basichashmap_entry_s *entry_result;
+
+    int status = basicvector_find(hashmap->vector, (void **) &entry_result, basicvector_get_search_function, index);
+
+    switch (status) {
+        case BASICVECTOR_SUCCESS:
+            *result = entry_result->value;
+            return BASICHASHMAP_SUCCESS;
+        case BASICVECTOR_ITEM_NOT_FOUND:
+            return BASICHASHMAP_ITEM_NOT_FOUND;
+        default:
+            return BASICHASHMAP_MEMORY_ERROR;
+    };
+}
+
 bool basichashmap_remove_by_index_search_callback(
     void *item,
     void *user_data

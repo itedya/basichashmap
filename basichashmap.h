@@ -21,6 +21,21 @@ struct basichashmap_s;
 int basichashmap_init(struct basichashmap_s **hashmap);
 
 /*
+ * Get item from the hashmap by index
+ *
+ * Params:
+ *  hashmap - Pointer to hashmap instance
+ *  index   - Index of wanted item
+ *  result  - Pointer that underneath will have a pointer to item value
+ *
+ * Returns:
+ *  BASICHASHMAP_SUCCESS            - When everything went ok
+ *  BASICHASHMAP_MEMORY_ERROR       - When hashmap is NULL
+ *  BASiCHASHMAP_INVALID_ARGUMENT   - When result is NULL or when index is NULL
+ */
+int basichashmap_get(struct basichashmap_s *hashmap, char *index, void **result);
+
+/*
  * Set item in hashmap
  *
  * Params:
