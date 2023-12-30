@@ -19,6 +19,23 @@ struct basichashmap_s;
 int basichashmap_init(struct basichashmap_s **hashmap);
 
 /*
+ * Set item in hashmap
+ *
+ * Params:
+ *  hashmap                 - Pointer to hashmap instance
+ *  index                   - Index of new item (this value will be copied, memory management is done internally)
+ *  value                   - Pointer of new item value
+ *  deallocation_function   - Function that is executed when item of given index already exists and it needs to be deallocated before the new item is allocated. First parameter of the function is index, second the value of old item and third is value of user_data parameter (see last parameter of basichashmap_set function)
+ *  user_data               - Pointer with context data that is later passed to deallocation_function
+ *
+ * Returns:
+ *  BASICHASHMAP_SUCCESS        - When everything went ok
+ *  BASICHASHMAP_MEMORY_ERROR   - When memory error occured (for example could not allocate memory for new item)
+ *  
+ */
+int basichashmap_set(struct basichashmap_s *hashmap, char *index, void *value, void (*deallocation_function)(char *index, void *value, void *user_data), void *user_data);
+
+/*
  * Frees the hashmap from memory
  *
  * Params:
