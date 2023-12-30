@@ -6,11 +6,16 @@
 
 struct basichashmap_s;
 
-// Initializes hashmap
-//
-// Returns:
-//  BASICHASHMAP_MEMORY_ERROR   - when dynamic allocation failed
-//  BASICHASHMAP_SUCCESS        - when everything is ok
+/* 
+ * Initializes hashmap
+ *
+ * Params:
+ *  hashmap - Pointer to hashmap struct
+ *
+ * Returns:
+ *  BASICHASHMAP_MEMORY_ERROR   - when dynamic allocation failed
+ *  BASICHASHMAP_SUCCESS        - when everything went ok 
+*/
 int basichashmap_init(struct basichashmap_s **hashmap);
 
 /*
