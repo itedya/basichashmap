@@ -21,6 +21,19 @@ struct basichashmap_s;
 int basichashmap_init(struct basichashmap_s **hashmap);
 
 /*
+ * Get amount of items in hashmap
+ *
+ * Params:
+ *  hashmap - Pointer to hashmap instance
+ *  length  - Pointer to variable that amount will be assigned to
+ *
+ * Returns:
+ *  BASICHASHMAP_SUCCESS        - When everything went ok
+ *  BASICHASHMAP_MEMORY_ERROR   - When something internally when wrong
+ */
+int basichashmap_count(struct basichashmap_s *hashmap, int *length);
+
+/*
  * Get item from the hashmap by index
  *
  * Params:

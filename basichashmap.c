@@ -46,6 +46,16 @@ int basichashmap_init(struct basichashmap_s **hashmap) {
     return BASICHASHMAP_SUCCESS;
 }
 
+int basichashmap_count(struct basichashmap_s *hashmap, int *length) {
+    int status = basicvector_length(hashmap->vector, length);
+
+    if (status == BASICVECTOR_SUCCESS) {
+        return BASICHASHMAP_SUCCESS;
+    } else {
+        return BASICHASHMAP_MEMORY_ERROR;
+    }
+}
+
 bool basicvector_get_search_function(void *item, void *user_data) {
     struct basichashmap_entry_s *entry = (struct basichashmap_entry_s *) item;
     char *index = (char *) user_data;
