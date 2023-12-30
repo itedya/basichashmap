@@ -14,7 +14,7 @@ all:
 test:
 	make clean
 	mkdir -p ./build
-	gcc -Wall -Wextra main.c basichashmap.c -o build/test
+	gcc -Wall -Wextra tests/main.c tests/helpers.c basichashmap.c -o build/test -lbasicvector
 	./build/test
 
 install:

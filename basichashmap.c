@@ -30,6 +30,8 @@ void basichashmap_entry_s_deallocation_function(void *vector_item, void *user_da
 }
 
 int basichashmap_init(struct basichashmap_s **hashmap) {
+    if (hashmap == NULL) return BASICHASHMAP_MEMORY_ERROR;
+
     struct basichashmap_s *new_hashmap = malloc(sizeof(struct basichashmap_s));
 
     if (new_hashmap == NULL) {
