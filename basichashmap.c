@@ -47,6 +47,9 @@ int basichashmap_init(struct basichashmap_s **hashmap) {
 }
 
 int basichashmap_count(struct basichashmap_s *hashmap, int *length) {
+    if (hashmap == NULL) return BASICHASHMAP_MEMORY_ERROR;
+    if (length == NULL) return BASICHASHMAP_INVALID_ARGUMENT;
+
     int status = basicvector_length(hashmap->vector, length);
 
     if (status == BASICVECTOR_SUCCESS) {

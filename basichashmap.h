@@ -28,8 +28,9 @@ int basichashmap_init(struct basichashmap_s **hashmap);
  *  length  - Pointer to variable that amount will be assigned to
  *
  * Returns:
- *  BASICHASHMAP_SUCCESS        - When everything went ok
- *  BASICHASHMAP_MEMORY_ERROR   - When something internally when wrong
+ *  BASICHASHMAP_SUCCESS            - When everything went ok
+ *  BASICHASHMAP_MEMORY_ERROR       - When something internally when wrong or provided hashmap argument is NULL
+ *  BASICHASHMAP_INVALID_ARGUMENT   - When length argument is NULL
  */
 int basichashmap_count(struct basichashmap_s *hashmap, int *length);
 
