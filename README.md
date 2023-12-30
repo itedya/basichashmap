@@ -1,6 +1,6 @@
 # basichashmap
 
-String to pointer value hashmap implementation.
+String to pointer value hashmap implementation based on linked-list data structure.
 
 ## Dependencies
 
