@@ -68,7 +68,11 @@ int basichashmap_remove_by_index(
     int result;
 
     int status = basicvector_find_index(hashmap->vector, &result, basichashmap_remove_by_index_search_callback, index);
-    if (status != BASICVECTOR_SUCCESS) return status;
+    if (status == BASICVECTOR_ITEM_NOT_FOUND) {
+        return BASICHASHMAP_ITEM_NOT_FOUND;
+    } else if (status != BASICVECTOR_SUCCESS) {
+        return BASICHASHMAP_MEMORY_ERROR;
+    }
 
     struct deallocation_user_data_s deallocation_user_data = { deallocation_function, user_data };
 

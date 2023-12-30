@@ -48,8 +48,9 @@ int basichashmap_set(struct basichashmap_s *hashmap, char *index, void *value, v
  *
  * Returns:
  *  BASICHASHMAP_SUCCESS            - When everything went ok
- *  BASICHASHMAP_MEMORY_ERROR       - When hashmap is null
+ *  BASICHASHMAP_MEMORY_ERROR       - When hashmap is null or if something internally went wrong
  *  BASICHASHMAP_INVALID_ARGUMENT   - When index is null
+ *  BASICHASHMAP_ITEM_NOT_FOUND     - When value with given index does not exist
  */
 int basichashmap_remove_by_index(
     struct basichashmap_s *hashmap,
