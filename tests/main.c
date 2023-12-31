@@ -78,9 +78,6 @@ void basichashmap_count_4__test_if_returns_2_when_hashmap_has_two_items() {
 
     expect_status_success(basichashmap_free(hashmap, NULL, NULL));
 
-    printf("121\n");
-
-    
     pass("[basichashmap_count 4] returns 2 when hashmap has two items");
 }
 
