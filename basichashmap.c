@@ -19,10 +19,12 @@ struct deallocation_user_data_s {
 };
 
 void basichashmap_entry_s_deallocation_function(void *vector_item, void *user_data) {
-    struct deallocation_user_data_s *deallocation_user_data = (struct deallocation_user_data_s *) user_data;
     struct basichashmap_entry_s *hashmap_entry = (struct basichashmap_entry_s *) vector_item;
+    struct deallocation_user_data_s *deallocation_user_data = (struct deallocation_user_data_s *) user_data;
 
-    deallocation_user_data->deallocation_function(hashmap_entry->index, hashmap_entry->value, user_data);
+    if (deallocation_user_data->deallocation_function != NULL) {
+        deallocation_user_data->deallocation_function(hashmap_entry->index, hashmap_entry->value, user_data);
+    }
 
     free(hashmap_entry->index);
 
