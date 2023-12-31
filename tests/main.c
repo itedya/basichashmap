@@ -263,6 +263,79 @@ void basichashmap_set_5__test_if_returns_success_and_sets_item_and_executes_deal
     pass("[basichashmap_set 5] returns success and sets item and executes deallocation function with correct args when item already exists");
 }
 
+void basichashmap_get_1__test_if_returns_memory_error_when_hashmap_is_null() {
+    int *result;
+    
+    expect_status(basichashmap_get(NULL, "something", (void **) &result), BASICHASHMAP_MEMORY_ERROR);
+    
+    pass("[basichashmap_get 1] returns memory error hwen hashmap is null");
+}
+
+ void basichashmap_get_2__test_if_returns_invalid_argument_when_index_is_null() {
+    struct basichashmap_s *hashmap;
+
+    expect_status_success(basichashmap_init(&hashmap));
+
+    int *result;
+
+    expect_status(basichashmap_get(hashmap, NULL, (void **) &result), BASICHASHMAP_INVALID_ARGUMENT);
+
+    expect_status_success(basichashmap_free(hashmap, NULL, NULL));
+
+    pass("[basichashmap_get 2] returns invalid argument when index is null");
+}
+
+void basichashmap_get_3__test_if_returns_invalid_argument_when_result_is_null() {
+    struct basichashmap_s *hashmap;
+
+    expect_status_success(basichashmap_init(&hashmap));
+
+    expect_status(basichashmap_get(hashmap, "helloworld", NULL), BASICHASHMAP_INVALID_ARGUMENT);
+
+    expect_status_success(basichashmap_free(hashmap, NULL, NULL));
+
+    pass("[basichashmap_get 3] returns invalid argument when result is null");
+}
+
+void basichashmap_get_4__test_if_returns_status_success_with_valid_item_when_item_exists() {
+    struct basichashmap_s *hashmap;
+
+    expect_status_success(basichashmap_init(&hashmap));
+
+    int item1 = 129803;
+    int item2 = 7328;
+
+    expect_status_success(basichashmap_set(hashmap, "first_item", &item1, NULL, NULL));
+    expect_status_success(basichashmap_set(hashmap, "second_item", &item2, NULL, NULL));
+
+    int *result;
+
+    expect_status_success(basichashmap_get(hashmap, "first_item", (void **) &result));
+    assert(result == &item1, "result ptr is not equal to item1 var address");
+
+    expect_status_success(basichashmap_get(hashmap, "second_item", (void **) &result));
+    assert(result == &item2, "result ptr is not equal to item2 var address");
+
+    expect_status_success(basichashmap_free(hashmap, NULL, NULL));
+
+    pass("[basichashmap_get 4] returns status success with valid item when item exists");
+}
+
+void basichashmap_get_5__test_if_returns_status_item_not_found_when_item_does_not_exist() {
+    struct basichashmap_s *hashmap;
+
+    expect_status_success(basichashmap_init(&hashmap));
+    
+    expect_status_success(basichashmap_set(hashmap, "first_item", NULL, NULL, NULL));
+
+    int *result;
+    expect_status(basichashmap_get(hashmap, "somenonexistingitem", (void **) &result), BASICHASHMAP_ITEM_NOT_FOUND);
+
+    expect_status_success(basichashmap_free(hashmap, NULL, NULL));
+
+    pass("[basichashmap_get 5] returns status item not found when item does not exist");
+}
+
 int main() {
     basichashmap_init_1__test_if_basichashmap_init_initializes_it();
     basichashmap_init_2__test_if_basichashmap_init_returns_memory_error_when_passed_null_as_hashmap();
@@ -277,6 +350,12 @@ int main() {
     basichashmap_set_3__test_if_returns_success_and_does_not_execute_deallocation_function_and_sets_item_if_item_with_given_index_does_not_exist();
     basichashmap_set_4__test_if_returns_success_and_does_not_execute_deallocation_function_when_it_is_null_and_item_with_given_index_exists();
     basichashmap_set_5__test_if_returns_success_and_sets_item_and_executes_deallocation_function_with_correct_args_when_item_already_exists();
+
+    basichashmap_get_1__test_if_returns_memory_error_when_hashmap_is_null();
+    basichashmap_get_2__test_if_returns_invalid_argument_when_index_is_null();
+    basichashmap_get_3__test_if_returns_invalid_argument_when_result_is_null();
+    basichashmap_get_4__test_if_returns_status_success_with_valid_item_when_item_exists();
+    basichashmap_get_5__test_if_returns_status_item_not_found_when_item_does_not_exist();
 
     pass("All passed");
 
