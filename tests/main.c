@@ -477,6 +477,114 @@ void basichashmap_remove_by_index_5__test_if_returns_item_not_found_error_and_do
     pass("[basichashmap_remove_by_index 5] returns item not found error and does not execute deallocation function if item does not exist");
 }
 
+void basichashmap_free_1__test_if_returns_memory_error_when_passed_hashmap_is_null() {
+    expect_status(basichashmap_free(NULL, NULL, NULL), BASICHASHMAP_MEMORY_ERROR);
+
+    pass("[basichashmap_free 1] returns memory error when passed hashmap is null");
+}
+
+void basichashmap_free_2__test_if_returns_success_and_does_not_execute_deallocation_function_when_it_is_null() {
+    struct basichashmap_s *hashmap;
+
+    expect_status_success(basichashmap_init(&hashmap));
+
+    expect_status_success(basichashmap_set(hashmap, "first_item", NULL, NULL, NULL));
+
+    expect_status_success(basichashmap_free(hashmap, NULL, NULL));
+    
+    pass("[basichashmap_free 2] returns success and does not execute deallocation function when it is null");
+}
+
+bool basichashmap_free_3__DEALLOCATION_FUNCTION_FLAG_1 = false;
+
+void basichashmap_free_3__DEALLOCATION_FUNCTION(char *index, void *value, void *user_data) {
+    // silence the compiler
+    index = index;
+    value = value;
+    user_data = user_data;
+
+    basichashmap_free_3__DEALLOCATION_FUNCTION_FLAG_1 = true;
+}
+
+void basichashmap_free_3__test_if_returns_success_and_does_not_execute_deallocation_function_when_there_are_no_items_inside_the_vector() {
+    struct basichashmap_s *hashmap;
+
+    expect_status_success(basichashmap_init(&hashmap));
+
+    expect_status_success(basichashmap_free(hashmap, basichashmap_free_3__DEALLOCATION_FUNCTION, NULL));
+
+    assert(basichashmap_free_3__DEALLOCATION_FUNCTION_FLAG_1 == false, "basichashmap_free_3__DEALLOCATION_FUNCTION_FLAG_1 is not false");
+
+    pass("[basichashmap_free 3] returns success and does not execute deallocation function when there are no items inside the vector");
+}
+
+struct basichashmap_free_4__DEALLOCATION_FUNCTION_user_data_s {
+    char *touched_indexes[3];
+    void *touched_values[3];
+    void *received_user_data[3];
+};
+
+struct basichashmap_free_4__DEALLOCATION_FUNCTION_user_data_s basichashmap_free_4__DEALLOCATION_FUNCTION_user_data = { 0 };
+
+bool basichashmap_free_4__DEALLOCATION_FUNCTION_FLAG_1 = false;
+
+void basichashmap_free_4__DEALLOCATION_FUNCTION(char *index, void *value, void *user_data) {
+    basichashmap_free_4__DEALLOCATION_FUNCTION_FLAG_1 = true;
+
+    for (int i = 0; i < 3; i++) {
+        if (basichashmap_free_4__DEALLOCATION_FUNCTION_user_data.touched_indexes[i] == 0) {
+            char *copied_index = malloc(sizeof(char) * (strlen(index) + 1));
+            strcpy(copied_index, index);
+
+            basichashmap_free_4__DEALLOCATION_FUNCTION_user_data.touched_indexes[i] = copied_index;
+            basichashmap_free_4__DEALLOCATION_FUNCTION_user_data.touched_values[i] = value;
+            basichashmap_free_4__DEALLOCATION_FUNCTION_user_data.received_user_data[i] = user_data;
+
+            break;
+        }
+    }
+}
+
+// does: return success
+// does: execute deallocation function
+// does: execute deallocation function with correct args
+// when: there are items inside
+void basichashmap_free_4__test_if_returns_success_and_executes_deallocation_function_with_correct_args_when_there_are_items_inside_the_vector() {
+    struct basichashmap_s *hashmap;
+
+    expect_status_success(basichashmap_init(&hashmap));
+
+    int item1 = 1;
+    int item2 = 2;
+    int item3 = 3;
+
+    expect_status_success(basichashmap_set(hashmap, "first_item", &item1, NULL, NULL));
+    expect_status_success(basichashmap_set(hashmap, "second_item", &item2, NULL, NULL));
+    expect_status_success(basichashmap_set(hashmap, "third_item", &item3, NULL, NULL));
+
+    int user_data = 128378293;
+
+    expect_status_success(basichashmap_free(hashmap, basichashmap_free_4__DEALLOCATION_FUNCTION, &user_data));
+
+    assert(basichashmap_free_4__DEALLOCATION_FUNCTION_FLAG_1 == true, "basichashmap_free_4__DEALLOCATION_FUNCTION_FLAG_1 is not true");
+
+    assert(strcmp(basichashmap_free_4__DEALLOCATION_FUNCTION_user_data.touched_indexes[0], "first_item") == 0, "first touched index is not equal to first_item");
+    assert(strcmp(basichashmap_free_4__DEALLOCATION_FUNCTION_user_data.touched_indexes[1], "second_item") == 0, "second touched index is not equal to second_item");
+    assert(strcmp(basichashmap_free_4__DEALLOCATION_FUNCTION_user_data.touched_indexes[2], "third_item") == 0, "third touched index is not equal to third_item");
+
+    assert(basichashmap_free_4__DEALLOCATION_FUNCTION_user_data.touched_values[0] == &item1, "first touched value is not equal to address of item1 var");
+    assert(basichashmap_free_4__DEALLOCATION_FUNCTION_user_data.touched_values[1] == &item2, "first touched value is not equal to address of item2 var");
+    assert(basichashmap_free_4__DEALLOCATION_FUNCTION_user_data.touched_values[2] == &item3, "first touched value is not equal to address of item3 var");
+
+    for (int i = 0; i < 3; i++) assert(basichashmap_free_4__DEALLOCATION_FUNCTION_user_data.received_user_data[i] == &user_data, "One of received data is not equal to user data address");
+
+    free(basichashmap_free_4__DEALLOCATION_FUNCTION_user_data.touched_indexes[0]);
+    free(basichashmap_free_4__DEALLOCATION_FUNCTION_user_data.touched_indexes[1]);
+    free(basichashmap_free_4__DEALLOCATION_FUNCTION_user_data.touched_indexes[2]);
+
+    pass("[basichashmap_free 4] returns success and executes deallocation function with correct args when there are items inside the vector");
+}
+
 int main() {
     basichashmap_init_1__test_if_basichashmap_init_initializes_it();
     basichashmap_init_2__test_if_basichashmap_init_returns_memory_error_when_passed_null_as_hashmap();
@@ -503,6 +611,11 @@ int main() {
     basichashmap_remove_by_index_3__test_if_returns_success_and_removes_item_and_does_not_execute_deallocation_function_when_item_exists_and_deallocation_function_is_null();
     basichashmap_remove_by_index_4__test_if_returns_success_and_removes_item_and_executes_deallocation_function_with_correct_arguments_when_item_exists_and_deallocation_function_is_not_null();
     basichashmap_remove_by_index_5__test_if_returns_item_not_found_error_and_does_not_execute_deallocation_function_if_item_does_not_exist();
+
+    basichashmap_free_1__test_if_returns_memory_error_when_passed_hashmap_is_null();
+    basichashmap_free_2__test_if_returns_success_and_does_not_execute_deallocation_function_when_it_is_null();
+    basichashmap_free_3__test_if_returns_success_and_does_not_execute_deallocation_function_when_there_are_no_items_inside_the_vector();
+    basichashmap_free_4__test_if_returns_success_and_executes_deallocation_function_with_correct_args_when_there_are_items_inside_the_vector();
 
     pass("All passed");
 
