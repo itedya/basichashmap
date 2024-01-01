@@ -34,18 +34,16 @@ void basichashmap_entry_s_deallocation_function(void *vector_item, void *user_da
 int basichashmap_init(struct basichashmap_s **hashmap) {
     if (hashmap == NULL) return BASICHASHMAP_MEMORY_ERROR;
 
-    struct basichashmap_s *new_hashmap = malloc(sizeof(struct basichashmap_s));
+    *hashmap = malloc(sizeof(struct basichashmap_s));
 
-    if (new_hashmap == NULL) {
+    if (*hashmap == NULL) {
         return BASICHASHMAP_MEMORY_ERROR;
     }
 
-    if (basicvector_init(&new_hashmap->vector) != BASICVECTOR_SUCCESS) {
-        free(new_hashmap);
+    if (basicvector_init(&((*hashmap)->vector)) != BASICVECTOR_SUCCESS) {
+        free(*hashmap);
         return BASICHASHMAP_MEMORY_ERROR;
     }
-
-    *hashmap = new_hashmap;
 
     return BASICHASHMAP_SUCCESS;
 }
@@ -166,6 +164,8 @@ int basichashmap_free(struct basichashmap_s *hashmap, void (* deallocation_funct
     struct deallocation_user_data_s deallocation_user_data = { deallocation_function, user_data };
 
     basicvector_free(hashmap->vector, basichashmap_entry_s_deallocation_function, &deallocation_user_data);
+
+    free(hashmap);
 
     return BASICHASHMAP_SUCCESS;
 }

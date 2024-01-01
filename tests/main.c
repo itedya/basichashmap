@@ -258,6 +258,8 @@ void basichashmap_set_5__test_if_returns_success_and_sets_item_and_executes_deal
     assert(user_data->touched_value == &item2, "Deallocation function has been run with wrong value");
     assert(user_data->received_user_data == user_data, "Deallocation function has been run with wrong user data");
 
+    free(user_data->touched_index);
+    free(user_data);
 
     expect_status_success(basichashmap_free(hashmap, NULL, NULL));
     
@@ -436,6 +438,7 @@ void basichashmap_remove_by_index_4__test_if_returns_success_and_removes_item_an
     expect_status(basichashmap_get(hashmap, "second_item", (void **) &result_ptr), BASICHASHMAP_ITEM_NOT_FOUND);
     assert(result_ptr == NULL, "Result ptr is not null");
     
+    free(basichashmap_remove_by_index_4__DEALLOCATION_FUNCTION_user_data.touched_index);
     expect_status_success(basichashmap_free(hashmap, NULL, NULL));
 
     pass("[basichashmap_remove_by_index 4] returns success and removes item and executes deallocation function with correct arguments when item exists and deallocation function is not null");
