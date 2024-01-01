@@ -4,4 +4,4 @@ String to pointer value hashmap implementation based on linked-list data structu
 
 ## Dependencies
 
- - [basicvector](https://github.com/itedya/basicvector) - v0.3.0
+ - [basicvector](https://github.com/itedya/basicvector) - v0.4.0
